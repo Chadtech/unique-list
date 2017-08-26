@@ -1,7 +1,7 @@
 {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "summary": "A type to arrange things in order",
-    "repository": "https://github.com/Chadtech/UniqueList.git",
+    "repository": "https://github.com/Chadtech/unique-list.git",
     "license": "BSD3",
     "source-directories": [
         "src"
