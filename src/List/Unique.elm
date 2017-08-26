@@ -9,11 +9,12 @@ module List.Unique
         , reverse
         , member
         , length
-        , addFirst
+        , cons
         , addBefore
         , addAfter
         , isBefore
         , isAfter
+        , isFirst
         )
 
 {-| A type to arrange things an order
@@ -28,7 +29,7 @@ module List.Unique
 
 # Modifying UniqueLists
 
-@docs remove, addFirst, addBefore, addAfter, isBefore, isAfter
+@docs remove, cons, addBefore, addAfter, isBefore, isAfter
 
 
 -}
@@ -137,10 +138,10 @@ remove element (UniqueList list) =
     UniqueList (filterFor element list)
 
 
-{-| Add an element to a `UniqueList`, making it the first one
+{-| Add an element to the beginning of a `UniqueList`
 -}
-addFirst : a -> UniqueList a -> UniqueList a
-addFirst element (UniqueList list) =
+cons : a -> UniqueList a -> UniqueList a
+cons element (UniqueList list) =
     UniqueList (element :: (filterFor element list))
 
 
@@ -193,6 +194,9 @@ addAfter el newEl (UniqueList list) =
         UniqueList list
 
 
+
+
+
 {-| Check if an element is before another, if it is in the `UniqueList` at all.
 
     germanStates = List.Unique.fromList [ "Bavaria", "Brandenberg" ]
@@ -220,6 +224,20 @@ isAfter : a -> a -> UniqueList a -> Maybe Bool
 isAfter first after order =
     isBefore after first order
 
+
+{-| Check is an element is the first in a `UniqueList`
+-}
+isFirst : a -> UniqueList a -> Maybe Bool
+isFirst el (UniqueList list) =
+    case list of 
+        [] ->
+            Nothing
+
+        x :: xs ->
+            if x == el then
+                Just True
+            else
+                Just False
 
 
 
