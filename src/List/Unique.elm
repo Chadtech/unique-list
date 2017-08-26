@@ -29,7 +29,7 @@ module List.Unique
 
 # Modifying UniqueLists
 
-@docs remove, cons, addBefore, addAfter, isBefore, isAfter
+@docs remove, cons, addBefore, addAfter, isBefore, isAfter, isFirst
 
 
 -}
