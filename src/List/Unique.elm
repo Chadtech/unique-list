@@ -1,6 +1,6 @@
 module List.Unique
     exposing
-        ( Order
+        ( UniqueList
         , empty
         , isEmpty
         , fromList
@@ -9,7 +9,6 @@ module List.Unique
         , reverse
         , member
         , length
-        , getOrderOf
         , addFirst
         , addBefore
         , addAfter
@@ -222,11 +221,6 @@ isAfter first after order =
     isBefore after first order
 
 
-{-| If the element is in the `UniqueList`, return what place it is in
--}
-getOrderOf : a -> UniqueList a -> Maybe Int
-getOrderOf el (UniqueList list) =
-    getOrderHelper el list
 
 
 
