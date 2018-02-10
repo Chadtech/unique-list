@@ -1,9 +1,9 @@
 module Tests exposing (..)
 
-import Test exposing (..)
 import Expect
-import Fuzz exposing (list, int, tuple3)
+import Fuzz exposing (int, list, tuple3)
 import List.Unique exposing (..)
+import Test exposing (..)
 
 
 all : Test
@@ -12,7 +12,7 @@ all =
         [ describe "toList, fromList"
             [ test "list is the same after toList and fromList" <|
                 \() ->
-                    Expect.true 
+                    Expect.true
                         "(List.Unique.toList <| List.Unique.fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]"
                         ((toList <| fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ])
             , test "toList removed duplicates" <|
@@ -26,23 +26,13 @@ all =
             , test "remove 'a' from alphabet" <|
                 \() ->
                     Expect.equal
-                        ((toList << remove 'a') (fromList ['a', 'b', 'c']))
-                         ['b', 'c']
+                        ((toList << remove 'a') (fromList [ 'a', 'b', 'c' ]))
+                        [ 'b', 'c' ]
             , test "remove 'b' from alphabet" <|
                 \() ->
                     Expect.equal
-                        ((toList << remove 'b') (fromList ['a', 'b', 'c']))
-                         ['a', 'c']
-            , test "'a' is added to beginning" <|
-                \() ->
-                    Expect.equal
-                        ((toList << (addFirst 'a')) (fromList [ 'b', 'c']))
-                        [ 'a', 'b', 'c' ]
-            , test "addBefore, 'a' is added to before 'b'" <|
-                \() ->
-                    Expect.equal
-                        ((toList << addBefore 'b' 'a') (fromList [ 'b', 'c']))
-                        [ 'a', 'b', 'c' ]
+                        ((toList << remove 'b') (fromList [ 'a', 'b', 'c' ]))
+                        [ 'a', 'c' ]
             , test "'b' is added after 'a'" <|
                 \() ->
                     Expect.equal
@@ -51,11 +41,13 @@ all =
             , test "'a' is before 'b'" <|
                 \() ->
                     Expect.equal (isBefore 'b' 'a' (fromList [ 'a', 'b', 'c' ]))
-                    (Just True)
+                        (Just True)
             , test "'z' is before 'b' in abc (should be Nothing)" <|
                 \() ->
-                    Expect.equal (isBefore 'b' 'z' (fromList ['a', 'b', 'c'])) 
-                    Nothing
+                    Expect.equal (isBefore 'b' 'z' (fromList [ 'a', 'b', 'c' ]))
+                        Nothing
+            , test "filterDuplicates [ True, True ] is [ True ]" <|
+                \() ->
+                    Expect.equal (filterDuplicates [ True, True ]) [ True ]
             ]
         ]
-

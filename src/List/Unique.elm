@@ -1,36 +1,44 @@
 module List.Unique
     exposing
         ( UniqueList
+        , addAfter
+        , addBefore
+        , cons
         , empty
-        , isEmpty
+        , filterDuplicates
         , fromList
-        , toList
+        , isAfter
+        , isBefore
+        , isEmpty
+        , isFirst
+        , length
+        , member
         , remove
         , reverse
-        , member
-        , length
-        , cons
-        , addBefore
-        , addAfter
-        , isBefore
-        , isAfter
-        , isFirst
+        , toList
         )
 
-{-| A type to arrange things an order
+{-| A list that can only contain unique elements
+
 
 # UniqueList
 
 @docs UniqueList
 
+
 # Basics
 
 @docs empty, isEmpty, fromList, toList, length, reverse, member
+
 
 # Modifying UniqueLists
 
 @docs remove, cons, addBefore, addAfter, isBefore, isAfter, isFirst
 
+
+# Util
+
+@docs filterDuplicates
 
 -}
 
@@ -54,6 +62,7 @@ empty =
 {-| Check if an Order is empty
 
     Order.isEmpty Order.empty == True
+
 -}
 isEmpty : UniqueList a -> Bool
 isEmpty (UniqueList list) =
@@ -72,6 +81,7 @@ isEmpty (UniqueList list) =
         ]
 
     List.Unique.length nobleGases == 6
+
 -}
 length : UniqueList a -> Int
 length (UniqueList list) =
@@ -142,8 +152,7 @@ remove element (UniqueList list) =
 -}
 cons : a -> UniqueList a -> UniqueList a
 cons element (UniqueList list) =
-    UniqueList (element :: (filterFor element list))
-
+    UniqueList (element :: filterFor element list)
 
 
 {-| Add an element to a `UniqueList` before another element
@@ -163,9 +172,9 @@ addBefore el newEl (UniqueList list) =
                 else
                     thisEl :: newList
         in
-            list
-                |> List.foldr check []
-                |> fromList
+        list
+            |> List.foldr check []
+            |> fromList
     else
         UniqueList list
 
@@ -187,14 +196,11 @@ addAfter el newEl (UniqueList list) =
                 else
                     thisEl :: newList
         in
-            list
-                |> List.foldr check []
-                |> fromList
+        list
+            |> List.foldr check []
+            |> fromList
     else
         UniqueList list
-
-
-
 
 
 {-| Check if an element is before another, if it is in the `UniqueList` at all.
@@ -204,6 +210,7 @@ addAfter el newEl (UniqueList list) =
     ("Bavaria" |> List.Unique.isBefore "Brandenberg") germanStates == Just True
 
     ("Bavaria" |> List.Unique.isBefore "New York City") germanStates == Nothing
+
 -}
 isBefore : a -> a -> UniqueList a -> Maybe Bool
 isBefore after first (UniqueList list) =
@@ -229,7 +236,7 @@ isAfter first after order =
 -}
 isFirst : a -> UniqueList a -> Maybe Bool
 isFirst el (UniqueList list) =
-    case list of 
+    case list of
         [] ->
             Nothing
 
@@ -239,6 +246,16 @@ isFirst el (UniqueList list) =
             else
                 Just False
 
+
+{-| If you just need to filter out duplicates, but dont want to use th `UniqueList` type, use this function. Its just like the `unique` function in `elm-community/list-extra`, except for the fact that `List.Extra.unique` only works on `List comparable`.
+
+    filterDuplicates [ True, True ] == [ True ]
+    filterDuplicates [ 1, 1, 2, 3, 5 ] == [ 1, 2, 3, 5 ]
+
+-}
+filterDuplicates : List a -> List a
+filterDuplicates =
+    fromList >> toList
 
 
 
@@ -267,10 +284,10 @@ getOrderRecursive el ( list, maybeIndex ) =
                 ( xEl, index ) =
                     x
             in
-                if xEl == el then
-                    ( [], Just index )
-                else
-                    getOrderRecursive el ( xs, maybeIndex )
+            if xEl == el then
+                ( [], Just index )
+            else
+                getOrderRecursive el ( xs, maybeIndex )
 
         [] ->
             ( [], Nothing )
