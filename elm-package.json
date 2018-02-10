@@ -1,13 +1,13 @@
 {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "summary": "A type to arrange things in order",
     "repository": "https://github.com/Chadtech/unique-list.git",
     "license": "BSD3",
     "source-directories": [
         "src"
     ],
-    "exposed-modules": [ 
-        "List.Unique" 
+    "exposed-modules": [
+        "List.Unique"
     ],
     "dependencies": {
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
