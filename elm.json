@@ -1,0 +1,15 @@
+{
+    "type": "package",
+    "name": "Chadtech/unique-list",
+    "summary": "A type to arrange things in order",
+    "license": "BSD-3-Clause",
+    "version": "2.1.0",
+    "exposed-modules": [
+        "List.Unique"
+    ],
+    "elm-version": "0.19.0 <= v < 0.20.0",
+    "dependencies": {
+        "elm/core": "1.0.0 <= v < 2.0.0"
+    },
+    "test-dependencies": {}
+}
