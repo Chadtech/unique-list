@@ -269,7 +269,7 @@ consIfNotMember el list =
 
 getOrderHelper : a -> List a -> Maybe Int
 getOrderHelper el list =
-    getOrderRecursive el ( List.indexedMap (flip Tuple.pair list, Nothing )
+    getOrderRecursive el ( List.indexedMap (flip Tuple.pair) list, Nothing )
         |> Tuple.second
 
 
