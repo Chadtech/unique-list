@@ -269,18 +269,14 @@ consIfNotMember el list =
 
 getOrderHelper : a -> List a -> Maybe Int
 getOrderHelper el list =
-    getOrderRecursive el ( List.indexedMap (flip Tuple.pair) list, Nothing )
+    getOrderRecursive el ( List.indexedMap Tuple.pair list, Nothing )
         |> Tuple.second
 
 
-getOrderRecursive : a -> ( List ( a, Int ), Maybe Int ) -> ( List ( a, Int ), Maybe Int )
+getOrderRecursive : a -> ( List ( Int, a ), Maybe Int ) -> ( List ( Int, a ), Maybe Int )
 getOrderRecursive el ( list, maybeIndex ) =
     case list of
-        x :: xs ->
-            let
-                ( xEl, index ) =
-                    x
-            in
+        ( index, xEl ) :: xs ->
             if xEl == el then
                 ( [], Just index )
 
