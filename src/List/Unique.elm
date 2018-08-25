@@ -1,22 +1,9 @@
-module List.Unique
-    exposing
-        ( UniqueList
-        , addAfter
-        , addBefore
-        , cons
-        , empty
-        , filterDuplicates
-        , fromList
-        , isAfter
-        , isBefore
-        , isEmpty
-        , isFirst
-        , length
-        , member
-        , remove
-        , reverse
-        , toList
-        )
+module List.Unique exposing
+    ( UniqueList
+    , empty, isEmpty, fromList, toList, length, reverse, member
+    , remove, cons, addBefore, addAfter, isBefore, isAfter, isFirst
+    , filterDuplicates
+    )
 
 {-| A list that can only contain unique elements
 
@@ -49,7 +36,7 @@ type UniqueList a
     = UniqueList (List a)
 
 
-{-| Create an empty `UniqueList
+{-| Create an empty \`UniqueList
 
     List.Unique.empty == List.Unique.fromList []
 
@@ -129,11 +116,13 @@ fromList list =
 {-| Turn a `UniqueList` into a `List`
 
     let
-        u = [ 'u' ]
+        u =
+            [ 'u' ]
 
-        doubleU = [ 'u', 'u' ]
+        doubleU =
+            [ 'u', 'u' ]
     in
-        u == (List.Unique.toList <| List.Unique.fromList doubleU)
+    u == (List.Unique.toList <| List.Unique.fromList doubleU)
 
 -}
 toList : UniqueList a -> List a
@@ -141,7 +130,7 @@ toList (UniqueList list) =
     list
 
 
-{-| Remove an element from a `UniqueList
+{-| Remove an element from a \`UniqueList
 -}
 remove : a -> UniqueList a -> UniqueList a
 remove element (UniqueList list) =
@@ -164,19 +153,21 @@ cons element (UniqueList list) =
 addBefore : a -> a -> UniqueList a -> UniqueList a
 addBefore el newEl (UniqueList list) =
     if newEl /= el then
-        let
-            check : a -> List a -> List a
-            check thisEl newList =
-                if thisEl == el then
-                    newEl :: thisEl :: newList
-                else
-                    thisEl :: newList
-        in
         list
-            |> List.foldr check []
+            |> List.foldr (addBeforeHelper newEl) []
             |> fromList
+
     else
         UniqueList list
+
+
+addBeforeHelper : a -> a -> List a -> List a
+addBeforeHelper newEl thisEl newList =
+    if thisEl == el then
+        newEl :: thisEl :: newList
+
+    else
+        thisEl :: newList
 
 
 {-| Add an element to a `UniqueList` before another element
@@ -188,19 +179,21 @@ addBefore el newEl (UniqueList list) =
 addAfter : a -> a -> UniqueList a -> UniqueList a
 addAfter el newEl (UniqueList list) =
     if newEl /= el then
-        let
-            check : a -> List a -> List a
-            check thisEl newList =
-                if thisEl == el then
-                    el :: newEl :: newList
-                else
-                    thisEl :: newList
-        in
         list
-            |> List.foldr check []
+            |> List.foldr (addAfterHelper newEl) []
             |> fromList
+
     else
         UniqueList list
+
+
+addAfterHelper : a -> a -> List a -> List a
+addAfterHelper newEl thisEl newList =
+    if thisEl == el then
+        el :: newEl :: newList
+
+    else
+        thisEl :: newList
 
 
 {-| Check if an element is before another, if it is in the `UniqueList` at all.
@@ -218,6 +211,7 @@ isBefore after first (UniqueList list) =
         ( Just afterIndex, Just firstIndex ) ->
             if firstIndex < afterIndex then
                 Just True
+
             else
                 Just False
 
@@ -243,6 +237,7 @@ isFirst el (UniqueList list) =
         x :: xs ->
             if x == el then
                 Just True
+
             else
                 Just False
 
@@ -250,6 +245,7 @@ isFirst el (UniqueList list) =
 {-| If you just need to filter out duplicates, but dont want to use th `UniqueList` type, use this function. Its just like the `unique` function in `elm-community/list-extra`, except for the fact that `List.Extra.unique` only works on `List comparable`.
 
     filterDuplicates [ True, True ] == [ True ]
+
     filterDuplicates [ 1, 1, 2, 3, 5 ] == [ 1, 2, 3, 5 ]
 
 -}
@@ -266,6 +262,7 @@ consIfNotMember : a -> List a -> List a
 consIfNotMember el list =
     if List.member el list then
         list
+
     else
         el :: list
 
@@ -286,6 +283,7 @@ getOrderRecursive el ( list, maybeIndex ) =
             in
             if xEl == el then
                 ( [], Just index )
+
             else
                 getOrderRecursive el ( xs, maybeIndex )
 
