@@ -154,15 +154,15 @@ addBefore : a -> a -> UniqueList a -> UniqueList a
 addBefore el newEl (UniqueList list) =
     if newEl /= el then
         list
-            |> List.foldr (addBeforeHelper newEl) []
+            |> List.foldr (addBeforeHelper el newEl) []
             |> fromList
 
     else
         UniqueList list
 
 
-addBeforeHelper : a -> a -> List a -> List a
-addBeforeHelper newEl thisEl newList =
+addBeforeHelper : a -> a -> a -> List a -> List a
+addBeforeHelper el newEl thisEl newList =
     if thisEl == el then
         newEl :: thisEl :: newList
 
@@ -180,15 +180,15 @@ addAfter : a -> a -> UniqueList a -> UniqueList a
 addAfter el newEl (UniqueList list) =
     if newEl /= el then
         list
-            |> List.foldr (addAfterHelper newEl) []
+            |> List.foldr (addAfterHelper el newEl) []
             |> fromList
 
     else
         UniqueList list
 
 
-addAfterHelper : a -> a -> List a -> List a
-addAfterHelper newEl thisEl newList =
+addAfterHelper : a -> a -> a -> List a -> List a
+addAfterHelper el newEl thisEl newList =
     if thisEl == el then
         el :: newEl :: newList
 
