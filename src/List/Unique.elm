@@ -12,16 +12,21 @@ module List.Unique exposing
 
 @docs UniqueList
 
+# Create
+@docs fromList, toList, empty
 
-# Basics
+# Utilities
 
-@docs empty, isEmpty, fromList, toList, length, reverse, member
+@docs length, reverse, member
 
 
-# Modifying UniqueLists
+# Combine
 
-@docs remove, cons, addBefore, addAfter, isBefore, isAfter, isFirst
+@docs cons, addBefore, addAfter, isBefore, isAfter, isFirst
 
+# Deconstruct
+
+@docs remove, isEmpty, isBefore, isAfter, isFirst
 
 # Util
 
@@ -35,8 +40,25 @@ module List.Unique exposing
 type UniqueList a
     = UniqueList (List a)
 
+{-| Create a `UniqueList` from a `List`
+-}
+fromList : List a -> UniqueList a
+fromList list =
+    UniqueList (List.foldr consIfNotMember [] list)
 
-{-| Create an empty \`UniqueList
+
+{-| Turn a `UniqueList` into a `List`
+
+    
+    [1] == (List.Unique.toList << List.Unique.fromList) [1,1]
+
+-}
+toList : UniqueList a -> List a
+toList (UniqueList list) =
+    list
+
+
+{-| Create an empty `UniqueList`
 
     List.Unique.empty == List.Unique.fromList []
 
@@ -106,31 +128,9 @@ member el (UniqueList list) =
     List.member el list
 
 
-{-| Create a `UniqueList` from a `List`
--}
-fromList : List a -> UniqueList a
-fromList list =
-    UniqueList (List.foldr consIfNotMember [] list)
 
 
-{-| Turn a `UniqueList` into a `List`
-
-    let
-        u =
-            [ 'u' ]
-
-        doubleU =
-            [ 'u', 'u' ]
-    in
-    u == (List.Unique.toList <| List.Unique.fromList doubleU)
-
--}
-toList : UniqueList a -> List a
-toList (UniqueList list) =
-    list
-
-
-{-| Remove an element from a \`UniqueList
+{-| Remove an element from a `UniqueList`
 -}
 remove : a -> UniqueList a -> UniqueList a
 remove element (UniqueList list) =
@@ -201,6 +201,8 @@ addAfterHelper el newEl thisEl newList =
     germanStates = List.Unique.fromList [ "Bavaria", "Brandenberg" ]
 
     ("Bavaria" |> List.Unique.isBefore "Brandenberg") germanStates == Just True
+    
+    ("Brandenburg" |> List.Unique.isBefore "Bavaria") germanStates == Just False
 
     ("Bavaria" |> List.Unique.isBefore "New York City") germanStates == Nothing
 
