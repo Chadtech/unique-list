@@ -1,7 +1,9 @@
 module List.Unique exposing
     ( UniqueList
-    , empty, isEmpty, fromList, toList, length, reverse, member
-    , remove, cons, addBefore, addAfter, isBefore, isAfter, isFirst
+    , fromList, toList, empty
+    , length, reverse, member
+    , cons, addBefore, addAfter
+    , remove, isEmpty, isBefore, isAfter, isFirst
     , filterDuplicates
     )
 
@@ -12,8 +14,11 @@ module List.Unique exposing
 
 @docs UniqueList
 
+
 # Create
+
 @docs fromList, toList, empty
+
 
 # Utilities
 
@@ -22,11 +27,13 @@ module List.Unique exposing
 
 # Combine
 
-@docs cons, addBefore, addAfter, isBefore, isAfter, isFirst
+@docs cons, addBefore, addAfter
+
 
 # Deconstruct
 
 @docs remove, isEmpty, isBefore, isAfter, isFirst
+
 
 # Util
 
@@ -40,6 +47,7 @@ module List.Unique exposing
 type UniqueList a
     = UniqueList (List a)
 
+
 {-| Create a `UniqueList` from a `List`
 -}
 fromList : List a -> UniqueList a
@@ -49,8 +57,7 @@ fromList list =
 
 {-| Turn a `UniqueList` into a `List`
 
-    
-    [1] == (List.Unique.toList << List.Unique.fromList) [1,1]
+    [ 1 ] == (List.Unique.toList << List.Unique.fromList) [ 1, 1 ]
 
 -}
 toList : UniqueList a -> List a
@@ -128,8 +135,6 @@ member el (UniqueList list) =
     List.member el list
 
 
-
-
 {-| Remove an element from a `UniqueList`
 -}
 remove : a -> UniqueList a -> UniqueList a
@@ -201,7 +206,7 @@ addAfterHelper el newEl thisEl newList =
     germanStates = List.Unique.fromList [ "Bavaria", "Brandenberg" ]
 
     ("Bavaria" |> List.Unique.isBefore "Brandenberg") germanStates == Just True
-    
+
     ("Brandenburg" |> List.Unique.isBefore "Bavaria") germanStates == Just False
 
     ("Bavaria" |> List.Unique.isBefore "New York City") germanStates == Nothing
