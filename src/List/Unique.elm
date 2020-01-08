@@ -53,7 +53,7 @@ type UniqueList a
 {-| Create a `UniqueList` from a `List`.
 
 **Note:** elements are placed in the position at
-which they occured last:
+which they occurred last:
 
     fromList [ 3, 1, 2, 3 ] == fromList [ 1, 2, 3 ]
 
