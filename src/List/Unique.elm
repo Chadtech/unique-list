@@ -42,22 +42,30 @@ module List.Unique exposing
 -}
 
 
-{-| An arrangement of things in an order. An `UniqueList` is kind of like a `List`, except there cant be duplicate elements. And, its kind of like a `Set`, except an `UniqueList`s elements go from first to last.
+{-| A list that has no duplicate elements, much like a `Set`.
+However, `UniqueList` preserves the initial order of elements and
+does not require that elements be `comparable`.
 -}
 type UniqueList a
     = UniqueList (List a)
 
 
-{-| Create a `UniqueList` from a `List`
+{-| Create a `UniqueList` from a `List`.
+
+**Note:** elements are placed in the position at
+which they occured last:
+
+    fromList [ 3, 1, 2, 3 ] == fromList [ 1, 2, 3 ]
+
 -}
 fromList : List a -> UniqueList a
 fromList list =
     UniqueList (List.foldr consIfNotMember [] list)
 
 
-{-| Turn a `UniqueList` into a `List`
+{-| Turn a `UniqueList` into a `List`.
 
-    [ 1 ] == (List.Unique.toList << List.Unique.fromList) [ 1, 1 ]
+    [ 1 ] == (toList << fromList) [ 1, 1 ]
 
 -}
 toList : UniqueList a -> List a
@@ -65,9 +73,9 @@ toList (UniqueList list) =
     list
 
 
-{-| Create an empty `UniqueList`
+{-| Create an empty `UniqueList`.
 
-    List.Unique.empty == List.Unique.fromList []
+    empty == fromList []
 
 -}
 empty : UniqueList a
@@ -75,9 +83,11 @@ empty =
     UniqueList []
 
 
-{-| Check if an Order is empty
+{-| Check if a `UniqueList` is empty.
 
-    Order.isEmpty Order.empty == True
+    isEmpty (fromList []) == True
+
+    isEmpty (fromList [ 1 ]) == False
 
 -}
 isEmpty : UniqueList a -> Bool
@@ -85,18 +95,13 @@ isEmpty (UniqueList list) =
     List.isEmpty list
 
 
-{-| Get the length of a `UniqueList`
+{-| Determine the number of _unique_ elements in a `UniqueList`.
 
-    nobleGases = List.Unique.fromList
-        [ helium
-        , neon
-        , argon
-        , krypton
-        , xenon
-        , radon
-        ]
+    -- Without duplicates
+    length (fromList [ 1, 2, 3 ]) == 3
 
-    List.Unique.length nobleGases == 6
+    -- With duplicates
+    length (fromList [ 2, 2, 2 ]) == 1
 
 -}
 length : UniqueList a -> Int
@@ -104,20 +109,11 @@ length (UniqueList list) =
     List.length list
 
 
-{-| Reverse a `UniqueList`
+{-| Reverse a `UniqueList`.
 
-    bestCoffeeDrinks ==
-        List.Unique.fromList
-            [ cortado
-            , latte
-            , coldbrew
-            , coffee
-            , mocha
-            ]
+    fromList [ "first", "second" ] == reverse (fromList [ "second", "first" ])
 
-    worstCoffeeDrinks : UniqueList Coffee
-    worstCoffeeDrinks =
-        List.Unique.reverse bestCoffeeDrinks
+    fromList [ 1, 2, 3, 3 ] == reverse (fromList [ 3, 2, 1 ])
 
 -}
 reverse : UniqueList a -> UniqueList a
@@ -125,9 +121,11 @@ reverse (UniqueList list) =
     UniqueList (List.reverse list)
 
 
-{-| Check if something is in a `UniqueList`
+{-| Determine if a `UniqueList` contains a value.
 
-    List.Unique.member "Grover Cleveland" usPresidents == True
+    member 4 (fromList [ 1, 4, 6 ]) == True
+
+    member "cat" (fromList [ "dog", "bird" ]) == True
 
 -}
 member : a -> UniqueList a -> Bool
@@ -135,24 +133,49 @@ member el (UniqueList list) =
     List.member el list
 
 
-{-| Remove an element from a `UniqueList`
+{-| Remove a value from a `UniqueList` if the value is present.
+
+    remove 2 (fromList [ 1, 2, 3 ]) == fromList [ 1, 3 ]
+
+    remove 0 (fromList [ 1, 2, 3 ]) == fromList [ 1, 2, 3 ]
+
 -}
 remove : a -> UniqueList a -> UniqueList a
 remove element (UniqueList list) =
     UniqueList (filterFor element list)
 
 
-{-| Add an element to the beginning of a `UniqueList`
+{-| Add an element to the front of a `UniqueList`.
+
+If the element was already in the list, it will be moved to the
+front of the list.
+
+    -- Add an element
+    cons 1 (fromList [ 2, 3, 4 ]) == fromList [ 1, 2, 3, 4 ]
+
+    -- Move an element
+    cons 3 (fromList [ 1, 2, 3 ]) == fromList [ 3, 1, 2 ]
+
 -}
 cons : a -> UniqueList a -> UniqueList a
 cons element (UniqueList list) =
     UniqueList (element :: filterFor element list)
 
 
-{-| Add an element to a `UniqueList` before another element
+{-| Add an element to a `UniqueList` before another element.
 
-    addBefore `c` `b` (List.Unique.fromList [ `a`, `c`, `d` ])
-        == List.Unique.fromList [ `a`, `b`, `c`, `d` ]
+If the added element is already in the list, it will be moved to the
+new position. If the element to be placed before is not in the list,
+no changes will be made.
+
+    -- Add an element
+    addBefore 2 6 (fromList [ 9, 0, 2, 1, 4 ]) == fromList [ 9, 0, 6, 2, 1, 4 ]
+
+    -- Move an element
+    addBefore 4 1 (fromList [ 1, 2, 3, 4 ]) == fromList [ 2, 3, 1, 4 ]
+
+    -- No effect
+    addBefore 0 1 (fromList [ 1, 2 ]) == fromList [ 1, 2 ]
 
 -}
 addBefore : a -> a -> UniqueList a -> UniqueList a
@@ -175,10 +198,20 @@ addBeforeHelper el newEl thisEl newList =
         thisEl :: newList
 
 
-{-| Add an element to a `UniqueList` before another element
+{-| Add an element to a `UniqueList` after another element
 
-    addAfter `b` `c` (List.Unique.fromList [ `a`, `b`, `d` ])
-        == List.Unique.fromList [ `a`, `b`, `c`, `d` ]
+If the added element is already in the list, it will be moved to the
+new position. If the element to be placed after is not in the list,
+no changes will be made.
+
+    -- Add an element
+    addAfter 2 3 (fromList [ 1, 2, 4, 5 ]) == fromList [ 1, 2, 3, 4, 5 ]
+
+    -- Move an element
+    addAfter 4 1 (fromList [ 1, 2, 3, 4 ]) == fromList [ 2, 3, 4, 1 ]
+
+    -- No effect
+    addAfter 0 1 (fromList [ 1, 2 ]) == fromList [ 1, 2 ]
 
 -}
 addAfter : a -> a -> UniqueList a -> UniqueList a
@@ -201,15 +234,17 @@ addAfterHelper el newEl thisEl newList =
         thisEl :: newList
 
 
-{-| Check if an element is before another, if it is in the `UniqueList` at all.
+{-| Check if an element is before another, if either are in the `UniqueList` at all.
 
-    germanStates = List.Unique.fromList [ "Bavaria", "Brandenberg" ]
+Returns `Nothing` if either of the elements being queried are not in the list.
 
-    ("Bavaria" |> List.Unique.isBefore "Brandenberg") germanStates == Just True
+    germanStates = fromList [ "Bavaria", "Brandenberg" ]
 
-    ("Brandenburg" |> List.Unique.isBefore "Bavaria") germanStates == Just False
+    ("Bavaria" |> isBefore "Brandenberg") germanStates == Just True
 
-    ("Bavaria" |> List.Unique.isBefore "New York City") germanStates == Nothing
+    ("Brandenburg" |> isBefore "Bavaria") germanStates == Just False
+
+    ("Bavaria" |> isBefore "New York City") germanStates == Nothing
 
 -}
 isBefore : a -> a -> UniqueList a -> Maybe Bool
@@ -226,14 +261,20 @@ isBefore after first (UniqueList list) =
             Nothing
 
 
-{-| Check if an element is after another, if it is in the `UniqueList` at all.
+{-| Check if an element is after another, if either are in the `UniqueList` at all.
+
+Returns `Nothing` if either of the elements being queried are not in the list
+
 -}
 isAfter : a -> a -> UniqueList a -> Maybe Bool
 isAfter first after order =
     isBefore after first order
 
 
-{-| Check is an element is the first in a `UniqueList`
+{-| Check if an element is the first in a `UniqueList`.
+
+Returns `Nothing` if the list is empty.
+
 -}
 isFirst : a -> UniqueList a -> Maybe Bool
 isFirst el (UniqueList list) =
@@ -249,11 +290,16 @@ isFirst el (UniqueList list) =
                 Just False
 
 
-{-| If you just need to filter out duplicates, but dont want to use th `UniqueList` type, use this function. Its just like the `unique` function in `elm-community/list-extra`, except for the fact that `List.Extra.unique` only works on `List comparable`.
+{-| Remove duplicates from a list without using the `UniqueList` type.
+
+Similar to the `unique` function in `elm-community/list-extra`,
+however `List.Extra.unique` only works on `List comparable`.
 
     filterDuplicates [ True, True ] == [ True ]
 
     filterDuplicates [ 1, 1, 2, 3, 5 ] == [ 1, 2, 3, 5 ]
+
+    filterDuplicates [ 1, 2, 3, 4, 1 ] == [ 2, 3, 4, 1 ]
 
 -}
 filterDuplicates : List a -> List a
