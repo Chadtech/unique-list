@@ -1,6 +1,11 @@
-# UniqueList, A type to arrange things in order
+# UniqueList
 
-A `UniqueList` is like a list, but it cannot have duplicate entries. It is also like a `Set`, except the elements are in order.
+Create ordered lists with unique elements.
+
+`UniqueList` is similar to `Set`, but with two major differences:
+
++ The underlying type of a `UniqueList` need not be `comparable`.
++ Elements can be ordered, like a regular list.
 
 # Contributing
 
