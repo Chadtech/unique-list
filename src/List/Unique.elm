@@ -7,7 +7,7 @@ module List.Unique exposing
     , filterDuplicates
     )
 
-{-| A list that can only contain unique elements
+{-| An ordered list that contains unique elements.
 
 
 # UniqueList
@@ -52,8 +52,8 @@ type UniqueList a
 
 {-| Create a `UniqueList` from a `List`.
 
-**Note:** elements are placed in the position at
-which they occurred last:
+**Note:** Elements are placed in the position at
+which they occurred last.
 
     fromList [ 3, 1, 2, 3 ] == fromList [ 1, 2, 3 ]
 
@@ -95,7 +95,7 @@ isEmpty (UniqueList list) =
     List.isEmpty list
 
 
-{-| Determine the number of _unique_ elements in a `UniqueList`.
+{-| Determine the number of elements in a `UniqueList`.
 
     -- Without duplicates
     length (fromList [ 1, 2, 3 ]) == 3
@@ -125,7 +125,7 @@ reverse (UniqueList list) =
 
     member 4 (fromList [ 1, 4, 6 ]) == True
 
-    member "cat" (fromList [ "dog", "bird" ]) == True
+    member "cat" (fromList [ "dog", "bird" ]) == False
 
 -}
 member : a -> UniqueList a -> Bool
@@ -147,7 +147,7 @@ remove element (UniqueList list) =
 
 {-| Add an element to the front of a `UniqueList`.
 
-If the element was already in the list, it will be moved to the
+**Note:** If the element was already in the list, it will be moved to the
 front of the list.
 
     -- Add an element
@@ -164,12 +164,11 @@ cons element (UniqueList list) =
 
 {-| Add an element to a `UniqueList` before another element.
 
-If the added element is already in the list, it will be moved to the
-new position. If the element to be placed before is not in the list,
-no changes will be made.
+**Note:** If the added element is already in the list, it will be moved to the
+new position.
 
     -- Add an element
-    addBefore 2 6 (fromList [ 9, 0, 2, 1, 4 ]) == fromList [ 9, 0, 6, 2, 1, 4 ]
+    addBefore 2 6 (fromList [ 0, 2, 1 ]) == fromList [ 0, 6, 2, 1 ]
 
     -- Move an element
     addBefore 4 1 (fromList [ 1, 2, 3, 4 ]) == fromList [ 2, 3, 1, 4 ]
@@ -200,9 +199,8 @@ addBeforeHelper el newEl thisEl newList =
 
 {-| Add an element to a `UniqueList` after another element
 
-If the added element is already in the list, it will be moved to the
-new position. If the element to be placed after is not in the list,
-no changes will be made.
+**Note:** If the added element is already in the list, it will be moved to the
+new position.
 
     -- Add an element
     addAfter 2 3 (fromList [ 1, 2, 4, 5 ]) == fromList [ 1, 2, 3, 4, 5 ]
@@ -234,7 +232,7 @@ addAfterHelper el newEl thisEl newList =
         thisEl :: newList
 
 
-{-| Check if an element is before another, if either are in the `UniqueList` at all.
+{-| Check if an element is before another in a `UniqueList`.
 
 Returns `Nothing` if either of the elements being queried are not in the list.
 
@@ -261,9 +259,9 @@ isBefore after first (UniqueList list) =
             Nothing
 
 
-{-| Check if an element is after another, if either are in the `UniqueList` at all.
+{-| Check if an element is after another in a `UniqueList`.
 
-Returns `Nothing` if either of the elements being queried are not in the list
+Returns `Nothing` if either of the elements being queried are not in the list.
 
 -}
 isAfter : a -> a -> UniqueList a -> Maybe Bool
@@ -291,6 +289,9 @@ isFirst el (UniqueList list) =
 
 
 {-| Remove duplicates from a list without using the `UniqueList` type.
+
+**Note:** Elements are placed in the position at
+which they occurred last.
 
 Similar to the `unique` function in `elm-community/list-extra`,
 however `List.Extra.unique` only works on `List comparable`.
