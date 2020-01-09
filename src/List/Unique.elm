@@ -55,7 +55,8 @@ type UniqueList a
 **Note:** Elements are placed in the position at
 which they occurred last.
 
-    fromList [ 3, 1, 2, 3 ] == fromList [ 1, 2, 3 ]
+    fromList [ 3, 1, 2, 3 ]
+    --> fromList [ 1, 2, 3 ]
 
 -}
 fromList : List a -> UniqueList a
@@ -65,7 +66,8 @@ fromList list =
 
 {-| Turn a `UniqueList` into a `List`.
 
-    [ 1 ] == (toList << fromList) [ 1, 1 ]
+    toList (fromList [ 1, 1 ])
+    --> [1]
 
 -}
 toList : UniqueList a -> List a
@@ -75,7 +77,8 @@ toList (UniqueList list) =
 
 {-| Create an empty `UniqueList`.
 
-    empty == fromList []
+    empty
+    --> fromList []
 
 -}
 empty : UniqueList a
@@ -85,9 +88,9 @@ empty =
 
 {-| Check if a `UniqueList` is empty.
 
-    isEmpty (fromList []) == True
+    isEmpty (fromList []) --> True
 
-    isEmpty (fromList [ 1 ]) == False
+    isEmpty (fromList [ 1 ]) -->  False
 
 -}
 isEmpty : UniqueList a -> Bool
@@ -98,10 +101,12 @@ isEmpty (UniqueList list) =
 {-| Determine the number of elements in a `UniqueList`.
 
     -- Without duplicates
-    length (fromList [ 1, 2, 3 ]) == 3
+    length (fromList [ 1, 2, 3 ])
+    --> 3
 
     -- With duplicates
-    length (fromList [ 2, 2, 2 ]) == 1
+    length (fromList [ 2, 2, 2 ])
+    --> 1
 
 -}
 length : UniqueList a -> Int
@@ -111,9 +116,11 @@ length (UniqueList list) =
 
 {-| Reverse a `UniqueList`.
 
-    fromList [ "first", "second" ] == reverse (fromList [ "second", "first" ])
+    reverse (fromList [ "second", "first" ])
+    --> fromList [ "first", "second" ]
 
-    fromList [ 1, 2, 3, 3 ] == reverse (fromList [ 3, 2, 1 ])
+    reverse (fromList [ 3, 2, 1 ])
+    --> fromList [ 1, 2, 3, 3 ]
 
 -}
 reverse : UniqueList a -> UniqueList a
@@ -123,9 +130,11 @@ reverse (UniqueList list) =
 
 {-| Determine if a `UniqueList` contains a value.
 
-    member 4 (fromList [ 1, 4, 6 ]) == True
+    member 4 (fromList [ 1, 4, 6 ])
+    --> True
 
-    member "cat" (fromList [ "dog", "bird" ]) == False
+    member "cat" (fromList [ "dog", "bird" ])
+    --> False
 
 -}
 member : a -> UniqueList a -> Bool
@@ -135,9 +144,11 @@ member el (UniqueList list) =
 
 {-| Remove a value from a `UniqueList` if the value is present.
 
-    remove 2 (fromList [ 1, 2, 3 ]) == fromList [ 1, 3 ]
+    remove 2 (fromList [ 1, 2, 3 ])
+    --> fromList [ 1, 3 ]
 
-    remove 0 (fromList [ 1, 2, 3 ]) == fromList [ 1, 2, 3 ]
+    remove 0 (fromList [ 1, 2, 3 ])
+    --> fromList [ 1, 2, 3 ]
 
 -}
 remove : a -> UniqueList a -> UniqueList a
@@ -151,10 +162,12 @@ remove element (UniqueList list) =
 front of the list.
 
     -- Add an element
-    cons 1 (fromList [ 2, 3, 4 ]) == fromList [ 1, 2, 3, 4 ]
+    cons 1 (fromList [ 2, 3, 4 ])
+    --> fromList [ 1, 2, 3, 4 ]
 
     -- Move an element
-    cons 3 (fromList [ 1, 2, 3 ]) == fromList [ 3, 1, 2 ]
+    cons 3 (fromList [ 1, 2, 3 ])
+    --> fromList [ 3, 1, 2 ]
 
 -}
 cons : a -> UniqueList a -> UniqueList a
@@ -168,13 +181,16 @@ cons element (UniqueList list) =
 new position.
 
     -- Add an element
-    addBefore 2 6 (fromList [ 0, 2, 1 ]) == fromList [ 0, 6, 2, 1 ]
+    addBefore 2 6 (fromList [ 0, 2, 1 ])
+    --> fromList [ 0, 6, 2, 1 ]
 
     -- Move an element
-    addBefore 4 1 (fromList [ 1, 2, 3, 4 ]) == fromList [ 2, 3, 1, 4 ]
+    addBefore 4 1 (fromList [ 1, 2, 3, 4 ])
+    --> fromList [ 2, 3, 1, 4 ]
 
     -- No effect
-    addBefore 0 1 (fromList [ 1, 2 ]) == fromList [ 1, 2 ]
+    addBefore 0 1 (fromList [ 1, 2 ])
+    --> fromList [ 1, 2 ]
 
 -}
 addBefore : a -> a -> UniqueList a -> UniqueList a
@@ -203,13 +219,16 @@ addBeforeHelper el newEl thisEl newList =
 new position.
 
     -- Add an element
-    addAfter 2 3 (fromList [ 1, 2, 4, 5 ]) == fromList [ 1, 2, 3, 4, 5 ]
+    addAfter 2 3 (fromList [ 1, 2, 4, 5 ])
+    --> fromList [ 1, 2, 3, 4, 5 ]
 
     -- Move an element
-    addAfter 4 1 (fromList [ 1, 2, 3, 4 ]) == fromList [ 2, 3, 4, 1 ]
+    addAfter 4 1 (fromList [ 1, 2, 3, 4 ])
+    --> fromList [ 2, 3, 4, 1 ]
 
     -- No effect
-    addAfter 0 1 (fromList [ 1, 2 ]) == fromList [ 1, 2 ]
+    addAfter 0 1 (fromList [ 1, 2 ])
+    --> fromList [ 1, 2 ]
 
 -}
 addAfter : a -> a -> UniqueList a -> UniqueList a
@@ -236,13 +255,16 @@ addAfterHelper el newEl thisEl newList =
 
 Returns `Nothing` if either of the elements being queried are not in the list.
 
-    germanStates = fromList [ "Bavaria", "Brandenberg" ]
+    germanStates = fromList
 
-    ("Bavaria" |> isBefore "Brandenberg") germanStates == Just True
+    ('A' |> isBefore 'C') (fromList [ 'A', 'B', 'C' ])
+    --> Just True
 
-    ("Brandenburg" |> isBefore "Bavaria") germanStates == Just False
+    ('D' |> isBefore 'B') (fromList [ 'B', 'C', 'D' ])
+    --> Just False
 
-    ("Bavaria" |> isBefore "New York City") germanStates == Nothing
+    ('Z' |> isBefore 'B') (fromList [ 'A', 'B' ])
+    --> Nothing
 
 -}
 isBefore : a -> a -> UniqueList a -> Maybe Bool
@@ -296,11 +318,14 @@ which they occurred last.
 Similar to the `unique` function in `elm-community/list-extra`,
 however `List.Extra.unique` only works on `List comparable`.
 
-    filterDuplicates [ True, True ] == [ True ]
+    filterDuplicates [ True, True ]
+    --> [ True ]
 
-    filterDuplicates [ 1, 1, 2, 3, 5 ] == [ 1, 2, 3, 5 ]
+    filterDuplicates [ 1, 1, 2, 3, 5 ]
+    --> [ 1, 2, 3, 5 ]
 
-    filterDuplicates [ 1, 2, 3, 4, 1 ] == [ 2, 3, 4, 1 ]
+    filterDuplicates [ 1, 2, 3, 4, 1 ]
+    --> [ 2, 3, 4, 1 ]
 
 -}
 filterDuplicates : List a -> List a
