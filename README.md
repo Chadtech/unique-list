@@ -7,6 +7,8 @@ Create ordered lists with unique elements.
 + The underlying type of a `UniqueList` need not be `comparable`.
 + Elements can be ordered, like a regular list.
 
-# Contributing
+## Contributing
 
-If you think this package could be better in some way, let me know. All feedback is welcome, and if you would like to make a change to this repo, just make a PR.
+If you think this package could be improved, let me know by opening
+an [issue](https://github.com/Chadtech/unique-list/issues/new)
+or a [pull request](https://github.com/Chadtech/unique-list).
