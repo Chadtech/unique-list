@@ -1,41 +1,38 @@
 module List.Unique exposing
     ( UniqueList
-    , fromList, toList, empty
-    , length, reverse, member
-    , cons, addBefore, addAfter
-    , remove, isEmpty, isBefore, isAfter, isFirst
+    , fromList, empty
+    , toList, length, member, isEmpty
+    , cons, remove, reverse, addBefore, addAfter
+    , isFirst, isBefore, isAfter
     , filterDuplicates
     )
 
 {-| An ordered list that contains unique elements.
-
-
-# UniqueList
 
 @docs UniqueList
 
 
 # Create
 
-@docs fromList, toList, empty
+@docs fromList, empty
 
 
 # Utilities
 
-@docs length, reverse, member
+@docs toList, length, member, isEmpty
 
 
-# Combine
+# Transform
 
-@docs cons, addBefore, addAfter
-
-
-# Deconstruct
-
-@docs remove, isEmpty, isBefore, isAfter, isFirst
+@docs cons, remove, reverse, addBefore, addAfter
 
 
-# Util
+# Query
+
+@docs isFirst, isBefore, isAfter
+
+
+# Helpers
 
 @docs filterDuplicates
 
@@ -88,9 +85,11 @@ empty =
 
 {-| Check if a `UniqueList` is empty.
 
-    isEmpty (fromList []) --> True
+    isEmpty (fromList [])
+    --> True
 
-    isEmpty (fromList [ 1 ]) -->  False
+    isEmpty (fromList [ 1 ])
+    -->  False
 
 -}
 isEmpty : UniqueList a -> Bool
@@ -255,8 +254,6 @@ addAfterHelper el newEl thisEl newList =
 
 Returns `Nothing` if either of the elements being queried are not in the list.
 
-    germanStates = fromList
-
     ('A' |> isBefore 'C') (fromList [ 'A', 'B', 'C' ])
     --> Just True
 
@@ -285,6 +282,16 @@ isBefore after first (UniqueList list) =
 
 Returns `Nothing` if either of the elements being queried are not in the list.
 
+    ('D' |> isAfter 'B') (fromList [ 'B', 'C', 'D' ])
+    --> Just True
+
+    ('A' |> isAfter 'C') (fromList [ 'A', 'B', 'C' ])
+    --> Just False
+
+
+    ('Z' |> isAfter 'B') (fromList [ 'A', 'B' ])
+    --> Nothing
+
 -}
 isAfter : a -> a -> UniqueList a -> Maybe Bool
 isAfter first after order =
@@ -294,6 +301,12 @@ isAfter first after order =
 {-| Check if an element is the first in a `UniqueList`.
 
 Returns `Nothing` if the list is empty.
+
+    isFirst 1 (fromList [1,2,3])
+    --> Just True
+
+    isFirst 1 empty
+    --> Nothing
 
 -}
 isFirst : a -> UniqueList a -> Maybe Bool
