@@ -1,9 +1,8 @@
 module List.Unique exposing
     ( UniqueList
     , fromList, empty
-    , toList, length, member, isEmpty
-    , cons, remove, reverse, addBefore, addAfter
-    , isFirst, isBefore, isAfter
+    , cons, remove, reverse, addBefore, addAfter, toList
+    , length, member, isEmpty, isFirst, isBefore, isAfter
     , filterDuplicates
     )
 
@@ -17,19 +16,14 @@ module List.Unique exposing
 @docs fromList, empty
 
 
-# Utilities
-
-@docs toList, length, member, isEmpty
-
-
 # Transform
 
-@docs cons, remove, reverse, addBefore, addAfter
+@docs cons, remove, reverse, addBefore, addAfter, toList
 
 
 # Query
 
-@docs isFirst, isBefore, isAfter
+@docs length, member, isEmpty, isFirst, isBefore, isAfter
 
 
 # Helpers
