@@ -17,14 +17,6 @@ suite =
         ]
 
 
-old : Test
-old =
-    describe "List.Unique"
-        [ describe "toList, fromList"
-            []
-        ]
-
-
 base : Test
 base =
     describe "Basic functions"
