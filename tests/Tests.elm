@@ -1,7 +1,7 @@
 module Tests exposing (suite)
 
 import Expect
-import Fuzz exposing (Fuzzer, int, list, tuple)
+import Fuzz exposing (Fuzzer, int, intRange, list, tuple)
 import List.Unique as UniqueList exposing (UniqueList)
 import Set
 import Test exposing (Test, describe, fuzz, test)
@@ -55,6 +55,9 @@ unorderedOperations =
 
         removeUsingSets x =
             List.sort << Set.toList << Set.remove x << Set.fromList
+
+        needleAndHaystack =
+            tuple ( list (intRange 0 1000), intRange 0 1000 )
     in
     describe "Unordered Operations"
         [ describe "remove"
@@ -68,22 +71,63 @@ unorderedOperations =
                     Expect.equal
                         (applyULFunction (UniqueList.remove 'b') [ 'a', 'b', 'c' ])
                         [ 'a', 'c' ]
-            , fuzz (tuple ( list int, int )) "Removed elements are no longer in the list" <|
-                \( xs, target ) ->
-                    Expect.equal (sortedElementsAfter (UniqueList.remove target) xs) (removeUsingSets target xs)
+            , fuzz needleAndHaystack "Removed elements are no longer in the list" <|
+                \( haystack, needle ) ->
+                    Expect.equal (sortedElementsAfter (UniqueList.remove needle) haystack) (removeUsingSets needle haystack)
             ]
-        , describe "length" []
-        , describe "member" []
-        , describe "isEmpty" []
+        , describe "length"
+            [ test "empty list has length 0" <|
+                \_ ->
+                    Expect.equal (UniqueList.length UniqueList.empty) 0
+            , fuzz (list int) "Length is equal to set cardinality" <|
+                \xs ->
+                    Expect.equal (UniqueList.length <| UniqueList.fromList xs) (Set.size <| Set.fromList xs)
+            ]
+        , describe "member"
+            [ fuzz needleAndHaystack "Length is equal to set cardinality" <|
+                \( haystack, needle ) ->
+                    Expect.equal
+                        (UniqueList.member needle <| UniqueList.fromList haystack)
+                        (Set.member needle <| Set.fromList haystack)
+            ]
+        , describe "isEmpty"
+            [ test "Empty UniqueList is empty" <|
+                \_ ->
+                    Expect.equal (UniqueList.isEmpty UniqueList.empty) True
+            , test "Non-empty list is non-empty" <|
+                \_ ->
+                    Expect.equal (UniqueList.isEmpty <| UniqueList.fromList [ 1, 2, 3 ]) False
+            ]
         ]
 
 
 orderedOperations : Test
 orderedOperations =
     describe "Ordered operations"
-        [ describe "cons" []
-        , describe "reverse" []
-        , describe "addBefore" []
+        [ describe "cons"
+            [ test "Simple cons of 1 to [2,3]" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction (UniqueList.cons 1) [ 2, 3 ])
+                        [ 1, 2, 3 ]
+            , test "Cons moves 1 to the head of  [2,3,1]" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction (UniqueList.cons 1) [ 2, 3, 1 ])
+                        [ 1, 2, 3 ]
+            ]
+        , describe "reverse"
+            [ test "Reverse of [1,2,3,1] is [1,3,2]" <|
+                \_ ->
+                    Expect.equal (applyULFunction UniqueList.reverse [ 1, 2, 3, 1 ]) [ 1, 3, 2 ]
+            ]
+        , describe "addBefore"
+            [ test "'b' is added before 'c'" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction ('b' |> UniqueList.addBefore 'c') [ 'a', 'c' ])
+                        [ 'a', 'b', 'c' ]
+            ]
         , describe "addAfter"
             [ test "'b' is added after 'a'" <|
                 \_ ->
@@ -91,7 +135,23 @@ orderedOperations =
                         (applyULFunction ('b' |> UniqueList.addAfter 'a') [ 'a', 'c' ])
                         [ 'a', 'b', 'c' ]
             ]
-        , describe "isFirst" []
+        , describe "isFirst"
+            [ test "1 isFirst of [1,2,3]" <|
+                \_ ->
+                    Expect.equal
+                        (UniqueList.isFirst 1 <| UniqueList.fromList [ 1, 2, 3 ])
+                        (Just True)
+            , test "1 is not first of [2,1,3]" <|
+                \_ ->
+                    Expect.equal
+                        (UniqueList.isFirst 1 <| UniqueList.fromList [ 2, 1, 3 ])
+                        (Just False)
+            , test "nothing isFirst of []" <|
+                \_ ->
+                    Expect.equal
+                        (UniqueList.isFirst 1 <| UniqueList.fromList [])
+                        Nothing
+            ]
         , describe "isBefore"
             [ test "'a' is before 'b'" <|
                 \_ ->
@@ -109,7 +169,13 @@ orderedOperations =
                         (UniqueList.fromList [ 'a', 'b', 'c' ] |> ('z' |> UniqueList.isBefore 'b'))
                         Nothing
             ]
-        , describe "isAfter" []
+        , describe "isAfter"
+            [ test "'c' is after 'a'" <|
+                \_ ->
+                    Expect.equal
+                        (UniqueList.fromList [ 'a', 'b', 'c' ] |> ('c' |> UniqueList.isAfter 'a'))
+                        (Just True)
+            ]
         ]
 
 
