@@ -2,7 +2,7 @@ module Tests exposing (suite)
 
 import Expect
 import Fuzz exposing (Fuzzer, int, intRange, list, tuple)
-import List.Unique as UniqueList exposing (UniqueList)
+import List.Unique as UL exposing (UniqueList)
 import Set
 import Test exposing (Test, describe, fuzz, test)
 
@@ -24,25 +24,25 @@ base =
             [ test "list is the same after toList and fromList" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.toList <| UniqueList.fromList [ 1, 2, 3 ])
+                        (UL.toList <| UL.fromList [ 1, 2, 3 ])
                         [ 1, 2, 3 ]
             ]
         , describe "toList"
             [ test "toList removes duplicates" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.toList <| UniqueList.fromList [ 1, 1, 2, 3 ])
+                        (UL.toList <| UL.fromList [ 1, 1, 2, 3 ])
                         [ 1, 2, 3 ]
             , test "toList keeps last occurence of duplicate elements" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.toList <| UniqueList.fromList [ 1, 5, 2, 3, 4, 5 ])
+                        (UL.toList <| UL.fromList [ 1, 5, 2, 3, 4, 5 ])
                         [ 1, 2, 3, 4, 5 ]
             ]
         , describe "empty"
             [ test "empty toList produces an empty list" <|
                 \_ ->
-                    Expect.equal (UniqueList.toList UniqueList.empty) []
+                    Expect.equal (UL.toList UL.empty) []
             ]
         ]
 
@@ -64,39 +64,39 @@ unorderedOperations =
             [ test "remove 'a' from alphabet" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (UniqueList.remove 'a') [ 'a', 'b', 'c' ])
+                        (applyULFunction (UL.remove 'a') [ 'a', 'b', 'c' ])
                         [ 'b', 'c' ]
             , test "remove 'b' from alphabet" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (UniqueList.remove 'b') [ 'a', 'b', 'c' ])
+                        (applyULFunction (UL.remove 'b') [ 'a', 'b', 'c' ])
                         [ 'a', 'c' ]
             , fuzz needleAndHaystack "Removed elements are no longer in the list" <|
                 \( haystack, needle ) ->
-                    Expect.equal (sortedElementsAfter (UniqueList.remove needle) haystack) (removeUsingSets needle haystack)
+                    Expect.equal (sortedElementsAfter (UL.remove needle) haystack) (removeUsingSets needle haystack)
             ]
         , describe "length"
             [ test "empty list has length 0" <|
                 \_ ->
-                    Expect.equal (UniqueList.length UniqueList.empty) 0
+                    Expect.equal (UL.length UL.empty) 0
             , fuzz (list int) "Length is equal to set cardinality" <|
                 \xs ->
-                    Expect.equal (UniqueList.length <| UniqueList.fromList xs) (Set.size <| Set.fromList xs)
+                    Expect.equal (UL.length <| UL.fromList xs) (Set.size <| Set.fromList xs)
             ]
         , describe "member"
             [ fuzz needleAndHaystack "Length is equal to set cardinality" <|
                 \( haystack, needle ) ->
                     Expect.equal
-                        (UniqueList.member needle <| UniqueList.fromList haystack)
+                        (UL.member needle <| UL.fromList haystack)
                         (Set.member needle <| Set.fromList haystack)
             ]
         , describe "isEmpty"
             [ test "Empty UniqueList is empty" <|
                 \_ ->
-                    Expect.equal (UniqueList.isEmpty UniqueList.empty) True
+                    Expect.equal (UL.isEmpty UL.empty) True
             , test "Non-empty list is non-empty" <|
                 \_ ->
-                    Expect.equal (UniqueList.isEmpty <| UniqueList.fromList [ 1, 2, 3 ]) False
+                    Expect.equal (UL.isEmpty <| UL.fromList [ 1, 2, 3 ]) False
             ]
         ]
 
@@ -108,97 +108,97 @@ orderedOperations =
             [ test "Simple cons of 1 to [2,3]" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (UniqueList.cons 1) [ 2, 3 ])
+                        (applyULFunction (UL.cons 1) [ 2, 3 ])
                         [ 1, 2, 3 ]
             , test "Cons moves 1 to the head of  [2,3,1]" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (UniqueList.cons 1) [ 2, 3, 1 ])
+                        (applyULFunction (UL.cons 1) [ 2, 3, 1 ])
                         [ 1, 2, 3 ]
             ]
         , describe "reverse"
             [ test "Reverse of [1,2,3,1] is [1,3,2]" <|
                 \_ ->
-                    Expect.equal (applyULFunction UniqueList.reverse [ 1, 2, 3, 1 ]) [ 1, 3, 2 ]
+                    Expect.equal (applyULFunction UL.reverse [ 1, 2, 3, 1 ]) [ 1, 3, 2 ]
             ]
         , describe "addBefore"
             [ test "'b' is added before 'c'" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction ('b' |> UniqueList.addBefore 'c') [ 'a', 'c' ])
+                        (applyULFunction ('b' |> UL.addBefore 'c') [ 'a', 'c' ])
                         [ 'a', 'b', 'c' ]
             , test "addBefore element that is not present" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction ('b' |> UniqueList.addBefore 'z') [ 'a', 'c' ])
+                        (applyULFunction ('b' |> UL.addBefore 'z') [ 'a', 'c' ])
                         [ 'a', 'c' ]
             , test "add element before itself" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (2 |> UniqueList.addBefore 2) [ 1, 2, 3 ])
+                        (applyULFunction (2 |> UL.addBefore 2) [ 1, 2, 3 ])
                         [ 1, 2, 3 ]
             ]
         , describe "addAfter"
             [ test "'b' is added after 'a'" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction ('b' |> UniqueList.addAfter 'a') [ 'a', 'c' ])
+                        (applyULFunction ('b' |> UL.addAfter 'a') [ 'a', 'c' ])
                         [ 'a', 'b', 'c' ]
             , test "addAfter element that is not present" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (1 |> UniqueList.addAfter 6) [ 1, 2, 3 ])
+                        (applyULFunction (1 |> UL.addAfter 6) [ 1, 2, 3 ])
                         [ 1, 2, 3 ]
             , test "add element after itself" <|
                 \_ ->
                     Expect.equal
-                        (applyULFunction (1 |> UniqueList.addAfter 1) [ 1, 2, 3 ])
+                        (applyULFunction (1 |> UL.addAfter 1) [ 1, 2, 3 ])
                         [ 1, 2, 3 ]
             ]
         , describe "isFirst"
             [ test "1 isFirst of [1,2,3]" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.isFirst 1 <| UniqueList.fromList [ 1, 2, 3 ])
+                        (UL.isFirst 1 <| UL.fromList [ 1, 2, 3 ])
                         (Just True)
             , test "1 is not first of [2,1,3]" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.isFirst 1 <| UniqueList.fromList [ 2, 1, 3 ])
+                        (UL.isFirst 1 <| UL.fromList [ 2, 1, 3 ])
                         (Just False)
             , test "nothing isFirst of []" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.isFirst 1 <| UniqueList.fromList [])
+                        (UL.isFirst 1 <| UL.fromList [])
                         Nothing
             ]
         , describe "isBefore"
             [ test "'a' is before 'b'" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.fromList [ 'a', 'b', 'c' ] |> ('a' |> UniqueList.isBefore 'b'))
+                        (UL.fromList [ 'a', 'b', 'c' ] |> ('a' |> UL.isBefore 'b'))
                         (Just True)
             , test "'b' is before 'd' but not immediately" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.fromList [ 'a', 'b', 'c', 'd' ] |> ('b' |> UniqueList.isBefore 'd'))
+                        (UL.fromList [ 'a', 'b', 'c', 'd' ] |> ('b' |> UL.isBefore 'd'))
                         (Just True)
             , test "'c' is not before 'b'" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.fromList [ 'a', 'b', 'c', 'd' ] |> ('c' |> UniqueList.isBefore 'b'))
+                        (UL.fromList [ 'a', 'b', 'c', 'd' ] |> ('c' |> UL.isBefore 'b'))
                         (Just False)
             , test "'z' is before 'b' in abc (should be Nothing)" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.fromList [ 'a', 'b', 'c' ] |> ('z' |> UniqueList.isBefore 'b'))
+                        (UL.fromList [ 'a', 'b', 'c' ] |> ('z' |> UL.isBefore 'b'))
                         Nothing
             ]
         , describe "isAfter"
             [ test "'c' is after 'a'" <|
                 \_ ->
                     Expect.equal
-                        (UniqueList.fromList [ 'a', 'b', 'c' ] |> ('c' |> UniqueList.isAfter 'a'))
+                        (UL.fromList [ 'a', 'b', 'c' ] |> ('c' |> UL.isAfter 'a'))
                         (Just True)
             ]
         ]
@@ -208,13 +208,13 @@ helpers : Test
 helpers =
     let
         sortedFilterDuplicates =
-            List.sort << UniqueList.filterDuplicates
+            List.sort << UL.filterDuplicates
     in
     describe "Helper functions"
         [ describe "filterDuplicates"
             [ test "filterDuplicates [ True, True ] is [ True ]" <|
                 \_ ->
-                    Expect.equal (UniqueList.filterDuplicates [ True, True ]) [ True ]
+                    Expect.equal (UL.filterDuplicates [ True, True ]) [ True ]
             , fuzz (list int) "Filtered list should not contain repeated elements" <|
                 \xs ->
                     Expect.equal (sortedDedupe xs) (sortedFilterDuplicates xs)
@@ -222,7 +222,7 @@ helpers =
                 \records ->
                     Expect.equal
                         (records |> List.map .value |> sortedDedupe)
-                        (records |> UniqueList.filterDuplicates |> List.map .value |> List.sort)
+                        (records |> UL.filterDuplicates |> List.map .value |> List.sort)
             ]
         ]
 
@@ -243,4 +243,4 @@ recordFuzzer =
 
 applyULFunction : (UniqueList a -> UniqueList a) -> List a -> List a
 applyULFunction f =
-    UniqueList.toList << f << UniqueList.fromList
+    UL.toList << f << UL.fromList
