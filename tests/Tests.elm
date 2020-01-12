@@ -127,6 +127,16 @@ orderedOperations =
                     Expect.equal
                         (applyULFunction ('b' |> UniqueList.addBefore 'c') [ 'a', 'c' ])
                         [ 'a', 'b', 'c' ]
+            , test "addBefore element that is not present" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction ('b' |> UniqueList.addBefore 'z') [ 'a', 'c' ])
+                        [ 'a', 'c' ]
+            , test "add element before itself" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction (2 |> UniqueList.addBefore 2) [ 1, 2, 3 ])
+                        [ 1, 2, 3 ]
             ]
         , describe "addAfter"
             [ test "'b' is added after 'a'" <|
@@ -134,6 +144,16 @@ orderedOperations =
                     Expect.equal
                         (applyULFunction ('b' |> UniqueList.addAfter 'a') [ 'a', 'c' ])
                         [ 'a', 'b', 'c' ]
+            , test "addAfter element that is not present" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction (1 |> UniqueList.addAfter 6) [ 1, 2, 3 ])
+                        [ 1, 2, 3 ]
+            , test "add element after itself" <|
+                \_ ->
+                    Expect.equal
+                        (applyULFunction (1 |> UniqueList.addAfter 1) [ 1, 2, 3 ])
+                        [ 1, 2, 3 ]
             ]
         , describe "isFirst"
             [ test "1 isFirst of [1,2,3]" <|
@@ -163,6 +183,11 @@ orderedOperations =
                     Expect.equal
                         (UniqueList.fromList [ 'a', 'b', 'c', 'd' ] |> ('b' |> UniqueList.isBefore 'd'))
                         (Just True)
+            , test "'c' is not before 'b'" <|
+                \_ ->
+                    Expect.equal
+                        (UniqueList.fromList [ 'a', 'b', 'c', 'd' ] |> ('c' |> UniqueList.isBefore 'b'))
+                        (Just False)
             , test "'z' is before 'b' in abc (should be Nothing)" <|
                 \_ ->
                     Expect.equal
