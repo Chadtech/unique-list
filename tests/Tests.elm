@@ -1,12 +1,24 @@
 module Tests exposing (suite)
 
 import Expect
+import Fuzz exposing (char, float, int, list, string)
 import List.Unique as UniqueList
-import Test exposing (Test, describe, test)
+import Set
+import Test exposing (Test, describe, fuzz, test)
 
 
 suite : Test
 suite =
+    Test.concat
+        [ base
+        , unorderedOperations
+        , orderedOperations
+        , helpers
+        ]
+
+
+old : Test
+old =
     describe "List.Unique"
         [ describe "toList, fromList"
             [ test "list is the same after toList and fromList" <|
@@ -19,9 +31,6 @@ suite =
                     Expect.true
                         "(toList <| fromList [ 1, 1, 2, 3 ]) == [ 1, 2, 3 ]"
                         ((UniqueList.toList <| UniqueList.fromList [ 1, 1, 2, 3 ]) == [ 1, 2, 3 ])
-            , test "empty toList is an empty list" <|
-                \() ->
-                    Expect.equal (UniqueList.toList UniqueList.empty) []
             , test "remove 'a' from alphabet" <|
                 \() ->
                     Expect.equal
@@ -45,8 +54,70 @@ suite =
                 \() ->
                     Expect.equal (UniqueList.isBefore 'b' 'z' (UniqueList.fromList [ 'a', 'b', 'c' ]))
                         Nothing
-            , test "filterDuplicates [ True, True ] is [ True ]" <|
-                \() ->
+            ]
+        ]
+
+
+base : Test
+base =
+    describe "Basic functions"
+        [ describe "fromList" []
+        , describe "toList" []
+        , describe "empty"
+            [ test "empty toList produces an empty list" <|
+                \_ ->
+                    Expect.equal (UniqueList.toList UniqueList.empty) []
+            ]
+        ]
+
+
+unorderedOperations : Test
+unorderedOperations =
+    describe "Unordered Operations"
+        [ describe "remove" []
+        , describe "length" []
+        , describe "member" []
+        , describe "isEmpty" []
+        ]
+
+
+orderedOperations : Test
+orderedOperations =
+    describe "Ordered operations"
+        [ describe "cons" []
+        , describe "reverse" []
+        , describe "addBefore" []
+        , describe "addAfter" []
+        , describe "isFirst" []
+        , describe "isBefore" []
+        , describe "isAfter" []
+        ]
+
+
+helpers : Test
+helpers =
+    let
+        sortedDedupe =
+            List.sort << Set.toList << Set.fromList
+
+        sortedFilterDuplicates =
+            List.sort << UniqueList.filterDuplicates
+
+        recordFuzzer =
+            Fuzz.map (\x -> { value = x }) int
+    in
+    describe "Helper functions"
+        [ describe "filterDuplicates"
+            [ test "filterDuplicates [ True, True ] is [ True ]" <|
+                \_ ->
                     Expect.equal (UniqueList.filterDuplicates [ True, True ]) [ True ]
+            , fuzz (list int) "Filtered list should not contain repeated elements" <|
+                \xs ->
+                    Expect.equal (sortedDedupe xs) (sortedFilterDuplicates xs)
+            , fuzz (list recordFuzzer) "Duplicates can be removed from non-comparable lists" <|
+                \records ->
+                    Expect.equal
+                        (records |> List.map .value |> sortedDedupe)
+                        (records |> UniqueList.filterDuplicates |> List.map .value |> List.sort)
             ]
         ]
