@@ -191,7 +191,7 @@ addBefore target new (UniqueList list) =
     if new == target then
         UniqueList list
 
-    else if List.member new list then
+    else if List.member new list && List.member target list then
         list
             |> filterFor new
             |> List.foldr (addBeforeHelper target new) []
@@ -235,7 +235,7 @@ addAfter target new (UniqueList list) =
     if new == target then
         UniqueList list
 
-    else if List.member new list then
+    else if List.member new list && List.member target list then
         list
             |> filterFor new
             |> List.foldr (addAfterHelper target new) []
