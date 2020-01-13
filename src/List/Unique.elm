@@ -187,14 +187,20 @@ new position.
 
 -}
 addBefore : a -> a -> UniqueList a -> UniqueList a
-addBefore el newEl (UniqueList list) =
-    if newEl /= el then
+addBefore target new (UniqueList list) =
+    if new == target then
+        UniqueList list
+
+    else if List.member new list && List.member target list then
         list
-            |> List.foldr (addBeforeHelper el newEl) []
+            |> filterFor new
+            |> List.foldr (addBeforeHelper target new) []
             |> fromList
 
     else
-        UniqueList list
+        list
+            |> List.foldr (addBeforeHelper target new) []
+            |> fromList
 
 
 addBeforeHelper : a -> a -> a -> List a -> List a
@@ -225,14 +231,20 @@ new position.
 
 -}
 addAfter : a -> a -> UniqueList a -> UniqueList a
-addAfter el newEl (UniqueList list) =
-    if newEl /= el then
+addAfter target new (UniqueList list) =
+    if new == target then
+        UniqueList list
+
+    else if List.member new list && List.member target list then
         list
-            |> List.foldr (addAfterHelper el newEl) []
+            |> filterFor new
+            |> List.foldr (addAfterHelper target new) []
             |> fromList
 
     else
-        UniqueList list
+        list
+            |> List.foldr (addAfterHelper target new) []
+            |> fromList
 
 
 addAfterHelper : a -> a -> a -> List a -> List a
