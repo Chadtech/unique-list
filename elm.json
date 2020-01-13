@@ -3,7 +3,7 @@
     "name": "Chadtech/unique-list",
     "summary": "A type to arrange things in order",
     "license": "BSD-3-Clause",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "exposed-modules": [
         "List.Unique"
     ],
