@@ -7,6 +7,10 @@ Create ordered lists with unique elements.
 + The underlying type of a `UniqueList` need not be `comparable`.
 + Elements can be ordered, like a regular list.
 
+## Notes
+
+UniqueList works using equality checks internally. That means your code will break if you use a type that cannot be equated using `==`. This includes functions and json (`Json.Encode.Value` and `Json.Decode.Value`).
+
 ## Contributing
 
 If you think this package could be improved, let me know by opening
